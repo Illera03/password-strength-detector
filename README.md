@@ -14,7 +14,7 @@ Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos...)
 
 - Python 3
 - scikit-learn
-- pandas, numpy
+- pandas
 - Streamlit (para la interfaz)
 - TfidfVectorizer (NLP para texto corto)
 - Dataset: [RockYou](https://github.com/danielmiessler/SecLists) filtrado
@@ -52,13 +52,16 @@ Contraseña: W!qRz9@v$M2e
 ```bash
   password-strength-detector/
   ├── data/
-  │   ├── rockyou_filtered.txt      # Dataset de contraseñas reales (limpiado)
+  │   ├── rockyou.txt      # Dataset de contraseñas reales
+  │   ├── rock_you_filtered.txt      # Dataset de contraseñas reales (limpiado)
   │   └── strong_passwords.txt      # Contraseñas generadas seguras
   ├── notebooks/
   │   └── exploratory_analysis.ipynb # Análisis inicial y pruebas
   ├── src/
   │   ├── model_training.py         # Entrena y guarda el modelo
   │   ├── predict_strength.py       # Evalúa una contraseña nueva
+  │   ├── prepare_week_passwords.py # Crea el dataset filtrado
+  │   ├── strong_password_generator.py # Crea el dataset de contraseñas seguras
   │   └── utils.py                  # Funciones auxiliares (cálculo entropía, etc.)
   ├── app/
   │   └── streamlit_app.py          # Interfaz de usuario
