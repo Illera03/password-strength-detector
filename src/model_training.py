@@ -1,9 +1,11 @@
+from tqdm import tqdm
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from utils import extract_features
 from sklearn.metrics import classification_report
 import joblib
+
 
 # --- Load passwords ---
 def load_passwords():
@@ -15,14 +17,11 @@ def load_passwords():
     # Load strong passwords
     with open("data/strong_passwords.txt", "r", encoding = "utf-8") as f:
         strong_passwords = [(line.strip(), 1) for line in f if line.strip()]
-    
     data = weak_passwords + strong_passwords
     df = pd.DataFrame(data, columns=["password","label"])
     return df
 
-
 df = load_passwords()
-
 
 # --- Vectorization ---
 vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(2, 5), max_features=5000)
@@ -31,9 +30,11 @@ X, scaler = extract_features(df["password"], vectorizer)
 y = df["label"]
 
 
-# --- Train model ---
-model = LogisticRegression(class_weight="balanced", max_iter=1000, random_state=42)
-model.fit(X,y)
+# --- Train model with progress bar ---
+max_iter = 1000
+model = LogisticRegression(class_weight="balanced", max_iter=1, warm_start=True, random_state=42, solver="lbfgs")
+for i in tqdm(range(max_iter), desc="Entrenando modelo"):
+    model.fit(X, y)
 
 
 # --- Evaluate model ---

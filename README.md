@@ -6,7 +6,7 @@ Este proyecto utiliza técnicas de Machine Learning para clasificar contraseñas
 
 ## 🧠 ¿Por qué no basta con reglas básicas?
 
-Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos...), pero siguen siendo predecibles. Este clasificador aprende de contraseñas reales filtradas para identificar patrones débiles más complejos.
+Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos, mayúsculas...), pero siguen siendo predecibles. Este clasificador aprende de contraseñas reales filtradas para identificar patrones débiles más complejos.
 
 ---
 
