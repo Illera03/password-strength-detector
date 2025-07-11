@@ -1,49 +1,76 @@
-from tqdm import tqdm
+import os
+import itertools
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from utils import extract_features
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import classification_report
+from utils import extract_features
 import joblib
+from tqdm import tqdm
 
+# --- CONFIG ---
+CHUNK_SIZE = 500_000
+EPOCHS = 2
 
-# --- Load passwords ---
-def load_passwords():
-    
-    # Load weak passwords
-    with open("data/rock_you_filtered.txt", "r", encoding = "utf-8") as f:
-        weak_passwords = [(line.strip(), 0) for line in f if line.strip()]
-        
-    # Load strong passwords
-    with open("data/strong_passwords.txt", "r", encoding = "utf-8") as f:
-        strong_passwords = [(line.strip(), 1) for line in f if line.strip()]
-    data = weak_passwords + strong_passwords
-    df = pd.DataFrame(data, columns=["password","label"])
-    return df
+weak_path = "data/rock_you_filtered.txt"
+strong_path = "data/strong_passwords.txt"
 
-df = load_passwords()
+# --- Load password chunks ---
+def load_chunk(filepath, label, start, size):
+    with open(filepath, "r", encoding="utf-8") as f:
+        lines = itertools.islice(f, start, start + size)
+        return [(line.strip(), label) for line in lines if line.strip()]
 
-# --- Vectorization ---
+# --- Generator for training batches ---
+def chunk_generator(chunk_size=CHUNK_SIZE):
+    weak_len = sum(1 for _ in open(weak_path, "r", encoding="utf-8"))
+    strong_len = sum(1 for _ in open(strong_path, "r", encoding="utf-8"))
+    total_chunks = min(weak_len, strong_len) // chunk_size
+
+    for i in range(total_chunks):
+        weak_chunk = load_chunk(weak_path, 0, i * chunk_size, chunk_size)
+        strong_chunk = load_chunk(strong_path, 1, i * chunk_size, chunk_size)
+        data = weak_chunk + strong_chunk
+        df = pd.DataFrame(data, columns=["password", "label"])
+        yield df
+
+# --- TF-IDF Initialization with progress ---
+print("📦 Fitting TfidfVectorizer on first chunk...")
+first_chunk = next(chunk_generator())
 vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(2, 5), max_features=5000)
-X_tfidf = vectorizer.fit_transform(df["password"])
-X, scaler = extract_features(df["password"], vectorizer)
-y = df["label"]
 
+# Add fake progress bar (TF-IDF doesn't expose progress)
+with tqdm(total=100, desc="Fitting TF-IDF", unit="%", ncols=80) as pbar:
+    X_vec = vectorizer.fit_transform(first_chunk["password"])
+    for i in range(100):
+        pbar.update(1)
 
-# --- Train model with progress bar ---
-max_iter = 1000
-model = LogisticRegression(class_weight="balanced", max_iter=1, warm_start=True, random_state=42, solver="lbfgs")
-for i in tqdm(range(max_iter), desc="Entrenando modelo"):
-    model.fit(X, y)
+# --- Feature extraction ---
+X_feat, scaler = extract_features(first_chunk["password"], vectorizer)
+y = first_chunk["label"]
 
+# --- Initialize incremental model ---
+model = SGDClassifier(loss="log_loss", random_state=42)
 
-# --- Evaluate model ---
-print(classification_report(y, model.predict(X)))
+print("🚀 Starting incremental training...")
+for epoch in range(EPOCHS):
+    print(f"🔁 Epoch {epoch + 1}/{EPOCHS}")
+    gen = chunk_generator()
+    for df in tqdm(gen, desc=f"Epoch {epoch + 1}", unit="chunk"):
+        X_feat, _ = extract_features(df["password"], vectorizer, scaler)
+        y = df["label"]
+        model.partial_fit(X_feat, y, classes=[0, 1])
 
+# --- Basic evaluation on last chunk ---
+print("✅ Training complete.")
+print("📊 Evaluation on last batch:")
+print(classification_report(y, model.predict(X_feat)))
 
-# --- Save model, vectorizer and scaler ---
+# --- Save model and vectorizer ---
+os.makedirs("models", exist_ok=True)
 joblib.dump(model, "models/password_model.pkl")
 joblib.dump(vectorizer, "models/vectorizer.pkl")
 joblib.dump(scaler, "models/scaler.pkl")
 
-print("✅ Model, vectorizer and scaler saved on /models")
+print("💾 Model, vectorizer and scaler saved to /models")
