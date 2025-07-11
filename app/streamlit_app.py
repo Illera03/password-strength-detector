@@ -43,7 +43,8 @@ st.title("🔐 Password Strength Detector")
 st.write("Enter a password to check its strength based on a pre-trained model.")
 
 default_pwd = st.session_state.get("generated_pwd", "")
-password = st.text_input("Introduce your password", type="password", value=default_pwd, label_visibility="collapsed", placeholder="Introduce your password here...")
+password = st.text_input("Introduce your password", type="password", value=default_pwd, label_visibility="collapsed",
+                         placeholder="Introduce your password here...")
 
 
 # --- Prediction ---
@@ -58,4 +59,5 @@ if password:
             
 
 # Footer 
-st.markdown('<div class="footer">Educational project created by Jorge Illera Rivera • No passwords are stored</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">Educational project created by Jorge Illera Rivera • No passwords are stored</div>',
+            unsafe_allow_html=True)

@@ -31,11 +31,7 @@ Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos, ma
    ```bash
    pip install -r requirements.txt
    ```
-3. Entrena el modelo (opcional, ya hay uno guardado):
-   ```bash
-   python src/model_training.py
-   ```
-4. Lanza la aplicación:
+3. Lanza la aplicación:
    ```bash
    streamlit run app/streamlit_app.py
    ```
@@ -47,6 +43,7 @@ Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos, ma
       H0l@123:)
    → Resultado: Débil (Muy común, patrón predecible)
 
+
 - Contraseña segura: 
 
       W!qRz9@v$M2e
@@ -55,24 +52,26 @@ Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos, ma
 ### 📁 Estructura del proyecto
 ```bash
   password-strength-detector/
-  ├── data/
-  │   ├── rockyou.txt      # Dataset de contraseñas reales
-  │   ├── rock_you_filtered.txt      # Dataset de contraseñas reales (limpiado)
-  │   └── strong_passwords.txt      # Contraseñas generadas seguras
-  ├── notebooks/
-  │   └── exploratory_analysis.ipynb # Análisis inicial y pruebas
-  ├── src/
-  │   ├── model_training.py         # Entrena y guarda el modelo
-  │   ├── predict_strength.py       # Evalúa una contraseña nueva
-  │   ├── prepare_week_passwords.py # Crea el dataset filtrado
-  │   ├── strong_password_generator.py # Crea el dataset de contraseñas seguras
-  │   └── utils.py                  # Funciones auxiliares (cálculo entropía, etc.)
   ├── app/
-  │   └── streamlit_app.py          # Interfaz de usuario
+  │   └── streamlit_app.py              # Interfaz de usuario
+  ├── data/
+  │   ├── rockyou.txt                   # Dataset de contraseñas reales
+  │   ├── rock_you_filtered.txt         # Dataset de contraseñas reales (limpiado)
+  │   └── strong_passwords.txt          # Contraseñas generadas seguras
   ├── models/
-  │   └── password_model.pkl        # Modelo entrenado
-  ├── requirements.txt              # Librerías necesarias
-  └── README.md                     # Descripción del proyecto
+  │   ├── password_model.pkl            # Modelo entrenado
+  │   ├──scaler.pkl                     # Escalador para normalizar datos
+  │   └── vectorizer.pkl                # Vectorizador para transformar texto
+  ├── notebooks/
+  │   └── exploratory_analysis.ipynb    # Análisis inicial y pruebas
+  ├── src/
+  │   ├── __init__.py                   # Inicialización del paquete
+  │   ├── model_training.py             # Entrena y guarda el modelo
+  │   ├── prepare_week_passwords.py     # Crea el dataset filtrado
+  │   ├── strong_password_generator.py  # Crea el dataset de contraseñas seguras
+  │   └── utils.py                      # Funciones auxiliares (cálculo entropía, etc.)
+  ├── requirements.txt                  # Librerías necesarias
+  └── README.md                         # Descripción del proyecto
   ```
 ### 📌 Posibles mejoras
 Explicabilidad: usar SHAP o LIME para mostrar qué hace que una contraseña sea débil
