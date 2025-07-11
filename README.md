@@ -29,7 +29,7 @@ Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos, ma
    cd password-strength-detector
 2. Instala las dependencias:
    ```bash
-    pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 3. Entrena el modelo (opcional, ya hay uno guardado):
    ```bash
@@ -42,11 +42,15 @@ Muchas contraseñas comunes cumplen requisitos mínimos (números, símbolos, ma
 
 ### 🧪 Ejemplo
 
-Contraseña: P@ssw0rd123
-→ Resultado: Débil (Muy común, patrón predecible)
+- Contraseña supuestamente segura (contiene mayúsculas, caracteres especiales, números y 8 caracteres o mas): 
 
-Contraseña: W!qRz9@v$M2e
-→ Resultado: Fuerte
+      H0l@123:)
+   → Resultado: Débil (Muy común, patrón predecible)
+
+- Contraseña segura: 
+
+      W!qRz9@v$M2e
+   → Resultado: Fuerte
 
 ### 📁 Estructura del proyecto
 ```bash
