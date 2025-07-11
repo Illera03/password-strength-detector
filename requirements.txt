@@ -1,4 +1,9 @@
-streamlit==1.35.0          # Interfaz web
-scikit-learn==1.5.0        # Modelo ML
-pandas==2.2.2              # Carga y gestión de datos
-joblib==1.4.2              # Guardar/cargar modelos
+# Recommended Python version: 3.10
+streamlit==1.26.0
+scikit-learn==1.3.2
+pandas==2.1.4
+joblib==1.3.2
+scipy==1.11.4
+tqdm==4.66.1
+matplotlib==3.8.3
+seaborn==0.12.2
