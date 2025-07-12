@@ -1,2 +1,2 @@
 data/rockyou.txt filter=lfs diff=lfs merge=lfs -text
-notebooks/* linguist-vendored
+notebooks/* linguist-detectable=false
